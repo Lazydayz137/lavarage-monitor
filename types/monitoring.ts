@@ -12,6 +12,8 @@ export type Monitoring = {
     ltv: number
     amountInQT: number
     amountInBT: number
+    elapsed: number
+    lastInterestCollectionElapsed: number
   }[]
   activePairsSet: Pair[]
 }

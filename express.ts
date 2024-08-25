@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
 import { Monitoring } from './types/monitoring';
+import { monitor } from './index';
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
-const port = 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/status', (request: Request, response: Response) => response.json({clients: clients.length}));
 
-const PORT = 3000;
+const PORT = 30001;
 
 let clients: any[] = [];
 
@@ -24,7 +24,7 @@ function eventsHandler(request: Request, response: Response, next: any) {
   };
   response.writeHead(200, headers);
 
-  const data = `data: ${JSON.stringify({})}\n\n`;
+  const data = `data: ${JSON.stringify({monitor})}\n\n`;
 
   response.write(data);
 
@@ -50,5 +50,5 @@ export function sendEventsToAll(newMonitoring: Monitoring) {
 }
 
 export const listen = () => app.listen(PORT, () => {
-  console.log(`Facts Events service listening at http://localhost:${PORT}`)
+  console.log(`Events service listening at http://localhost:${PORT}`)
 })

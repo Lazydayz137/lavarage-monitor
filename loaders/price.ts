@@ -33,15 +33,25 @@ export async function loadPrices(monitor: Monitoring) {
   }))
   // join the Record<string, any> array into one Record object. modify all the keys of the record. originally its just the BT, now add the vsToken
   const allPrices = prices.reduce((acc, price) => {
+
     Object.keys(price).forEach(key => {
-      acc[key + '-' + price.vsToken] = price[key]
+      acc[key + '-' + price[key].vsToken] = price[key]
     }
     )
     return acc
-  })
+  }, {})
   
 
-  monitor.activePairsSet.forEach(pair => {
+  monitor.activePairsSet?.forEach(pair => {
     pair.price = allPrices[pair.BTAddress + '-' + pair.QTAddress].price
   })
+
+  monitor.positions = monitor.positions?.map(p => {
+    return {
+      ...p,
+      ltv: p.amountInQT / (p.amountInBT * (monitor.activePairsSet.find(pair => pair.BTAddress == p.baseCoin.address && pair.QTAddress == p.quoteCoin.address)?.price || 0))
+    }
+  })
+
+  setTimeout(() => loadPrices(monitor), 30000)
 }
