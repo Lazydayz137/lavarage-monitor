@@ -47,6 +47,8 @@ export async function loadPrices(monitor: Monitoring) {
   })
 
   monitor.positions = monitor.positions?.map(p => {
+    // const interestAccrued = (pool.account.interestRate * p.account.amount / 100 * ((Date.now() / 1000 - p.account.timestamp) / 86400 + 1) / 365)
+        
     return {
       ...p,
       ltv: p.amountInQT / (p.amountInBT * (monitor.activePairsSet.find(pair => pair.BTAddress == p.baseCoin.address && pair.QTAddress == p.quoteCoin.address)?.price || 0))

@@ -7,6 +7,7 @@ export type Monitoring = {
     openedPositions: number
   },
   positions: {
+    address: string
     baseCoin: Coin
     quoteCoin: Coin
     ltv: number
@@ -18,6 +19,7 @@ export type Monitoring = {
   activePairsSet: Pair[]
 }
 
+// TODO: add qt usd price and bt usd price
 type Pair = {
   BTAddress: string,
   QTAddress: string,

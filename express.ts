@@ -24,7 +24,7 @@ function eventsHandler(request: Request, response: Response, next: any) {
   };
   response.writeHead(200, headers);
 
-  const data = `data: ${JSON.stringify({monitor})}\n\n`;
+  const data = `data: ${JSON.stringify(monitor)}\n\n`;
 
   response.write(data);
 

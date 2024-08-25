@@ -48,13 +48,14 @@ export async function loadPositionsFromAnchor(programIdAddress: string, provider
         },
       },
     ])).filter(({ account }) => isWithinEdgeCaseTimeRange(account.closeTimestamp.toNumber())))).filter(({ account }) => pools.includes(account.pool.toBase58()))
-  monitor.positions = await Promise.all(positions.map(async ({ account }) => {
+  monitor.positions = await Promise.all(positions.map(async ({ account, publicKey }) => {
     let token = tokenList.find(t => t.address === poolsObj.find(p => p.publicKey.toBase58() === account.pool.toBase58())!.account.collateralType.toBase58())
     if (!token) {
       await loadMissingToken(tokenList, poolsObj.find(p => p.publicKey.toBase58() === account.pool.toBase58())!.account.collateralType.toBase58())
       token = tokenList.find(t => t.address === poolsObj.find(p => p.publicKey.toBase58() === account.pool.toBase58())!.account.collateralType.toBase58())
     }
     return {
+      address: publicKey.toBase58(),
       baseCoin: {
         name: token!.name,
         address: token!.address
@@ -73,15 +74,17 @@ export async function loadPositionsFromAnchor(programIdAddress: string, provider
     }
   })
   )
-  monitor.activePairsSet = positions
-  .map(({ account }) => account.pool.toBase58())
-  .map((poolAddr) => {
-    const poolThis = poolsObj.find(p => p.publicKey.toBase58() === poolAddr)!
-    return {
-      BTAddress: poolThis.account.collateralType.toBase58(),
-      // TODO: now is SOL, need to convert to QT address later
-      QTAddress: 'So11111111111111111111111111111111111111112',
-      price: 0
-    }
-  })
+  monitor.activePairsSet = Array.from(new Set(positions
+    .map(({ account }) => account.pool.toBase58())
+    .map((poolAddr) => {
+      const poolThis = poolsObj.find(p => p.publicKey.toBase58() === poolAddr)!
+      return {
+        BTAddress: poolThis.account.collateralType.toBase58(),
+        // TODO: now is SOL, need to convert to QT address later
+        QTAddress: 'So11111111111111111111111111111111111111112',
+        price: 0
+      }
+    })
+    .map(pair => JSON.stringify(pair))))
+    .map(str => JSON.parse(str))
 }

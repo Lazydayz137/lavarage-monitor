@@ -11,7 +11,7 @@ export interface Token {
 }
 
 export async function loadTokenList(tokenList: Token[]): Promise<void> {
-  const response = await axios.get<Token[]>('https://tokens.jup.ag/tokens?tags=verified');
+  const response = await axios.get<Token[]>('https://tokens.jup.ag/tokens?tags=verified,pump');
   tokenList.push(...response.data);
 }
 
