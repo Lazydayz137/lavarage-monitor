@@ -10,8 +10,12 @@ export async function monitorAccountBalance(publicKeyString: string, tag: 'deplo
 
   // Function to get the current balance
   const getBalance = async () => {
-    const balance = await connection.getBalance(publicKey);
-    monitor.meta[tag] = balance / 1e9;
+    try {
+      const balance = await connection.getBalance(publicKey);
+      monitor.meta[tag] = balance / 1e9;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // Initial balance check

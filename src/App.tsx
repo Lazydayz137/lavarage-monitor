@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import { Button, Col, Row, Space, Statistic, Table } from 'antd';
-import { Monitoring } from '../../types/monitoring';
+import { Monitoring } from '../types/monitoring';
 import { LinkOutlined } from '@ant-design/icons';
 
 function App() {
@@ -20,7 +18,7 @@ function App() {
   });
 
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:30001/events');
+    const eventSource = new EventSource('/events');
     
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -64,7 +62,16 @@ function App() {
         <Col span={24}>
           <h2>Positions</h2>
           <Table dataSource={monitor.positions.filter(p => p.amountInQT > 0)} rowKey={(record) => `${record.baseCoin.address}-${record.quoteCoin.address}-${record.ltv}-${record.amountInQT}`}>
-            <Table.Column title="Base Coin" dataIndex={['baseCoin', 'name']} key="baseCoin" />
+            <Table.Column 
+              title="Base Coin" 
+              dataIndex={['baseCoin', 'name']} 
+              key="baseCoin" 
+              filters={monitor.positions
+                .filter(p => p.amountInQT > 0)
+                .map(p => ({ text: p.baseCoin.name, value: p.baseCoin.name }))
+                .filter((v, i, a) => a.findIndex(t => t.value === v.value) === i)}
+              onFilter={(value, record) => record.baseCoin.name === value}
+            />
             <Table.Column title="Quote Coin" dataIndex={['quoteCoin', 'name']} key="quoteCoin" />
             <Table.Column 
               title="LTV" 
@@ -77,6 +84,7 @@ function App() {
               title="Borrowed" 
               dataIndex="amountInQT" 
               key="amountInQT" 
+              sorter={(a, b) => a.amountInQT - b.amountInQT}
               render={(amount) => amount.toFixed(4)}
             />
             <Table.Column 
@@ -90,6 +98,7 @@ function App() {
               title="Position Age" 
               dataIndex="elapsed" 
               key="elapsed" 
+              sorter={(a, b) => a.elapsed - b.elapsed}
               render={(time) => `${(time / 3600).toFixed(2)} hours`}
             />
             <Table.Column 

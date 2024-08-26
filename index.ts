@@ -44,6 +44,6 @@ loadTokenList(tokenList).then(() => {
 
   loadPrices(monitor)
 
-  listen()
-})
 
+})
+listen()

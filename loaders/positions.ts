@@ -1,6 +1,6 @@
 // loads positions from memory. if there aren't any, load from blockchain using anchor
 // using postgres triggers, automatically update positions in memory
-import anchor, { AnchorProvider, Program, web3, } from '@coral-xyz/anchor';
+import { AnchorProvider, Program, web3, } from '@coral-xyz/anchor';
 import { Lavarage, IDL } from '../idl/lavarage'
 import { Monitoring } from '../types/monitoring';
 import BigNumber from 'bignumber.js';

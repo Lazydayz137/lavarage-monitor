@@ -4,14 +4,14 @@ import { monitor } from './index';
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
+import ViteExpress from "vite-express";
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
-
 app.get('/status', (request: Request, response: Response) => response.json({clients: clients.length}));
 
-const PORT = 30001;
+const PORT = 3000;
 
 let clients: any[] = [];
 
@@ -49,6 +49,6 @@ export function sendEventsToAll(newMonitoring: Monitoring) {
   clients.forEach(client => client.response.write(`data: ${JSON.stringify(newMonitoring)}\n\n`))
 }
 
-export const listen = () => app.listen(PORT, () => {
+export const listen = () => ViteExpress.listen(app,PORT, () => {
   console.log(`Events service listening at http://localhost:${PORT}`)
 })
