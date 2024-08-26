@@ -61,7 +61,7 @@ function App() {
       <Row style={{ marginTop: '20px' }}>
         <Col span={24}>
           <h2>Positions</h2>
-          <Table dataSource={monitor.positions.filter(p => p.amountInQT > 0)} rowKey={(record) => `${record.baseCoin.address}-${record.quoteCoin.address}-${record.ltv}-${record.amountInQT}`}>
+          <Table dataSource={monitor.positions.filter(p => p.amountInQT > 0)} rowKey={(record) => `${record.address}`}>
             <Table.Column 
               title="Base Coin" 
               dataIndex={['baseCoin', 'name']} 
