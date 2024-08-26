@@ -22,8 +22,12 @@ export async function monitorAccountBalance(publicKeyString: string, tag: 'deplo
   await getBalance();
 
   // Set up the WebSocket listener for account changes
-  connection.onAccountChange(publicKey, async (accountInfo, context) => {
-    await getBalance(); // Update the balance when there is a change
-  });
-
+  try {
+    connection.onAccountChange(publicKey, async (accountInfo, context) => {
+      await getBalance(); // Update the balance when there is a change
+    });
+  } catch (e) {
+    //retry
+    monitorAccountBalance(publicKeyString, tag, monitor)
+  }
 }

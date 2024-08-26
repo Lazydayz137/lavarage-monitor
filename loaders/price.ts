@@ -27,33 +27,38 @@ function generateListOfPriceURLs(monitor: Monitoring) {
 
 export async function loadPrices(monitor: Monitoring) {
   const urls = generateListOfPriceURLs(monitor)
-  const prices = await Promise.all(urls.map(async url => {
-    const response = await fetch(url)
-    return (await response.json()).data
-  }))
-  // join the Record<string, any> array into one Record object. modify all the keys of the record. originally its just the BT, now add the vsToken
-  const allPrices = prices.reduce((acc, price) => {
-
-    Object.keys(price).forEach(key => {
-      acc[key + '-' + price[key].vsToken] = price[key]
-    }
-    )
-    return acc
-  }, {})
+  try {
+    const prices = await Promise.all(urls.map(async url => {
+      const response = await fetch(url)
+      return (await response.json()).data
+    }))
+    // join the Record<string, any> array into one Record object. modify all the keys of the record. originally its just the BT, now add the vsToken
+    const allPrices = prices.reduce((acc, price) => {
   
-
-  monitor.activePairsSet?.forEach(pair => {
-    pair.price = allPrices[pair.BTAddress + '-' + pair.QTAddress].price
-  })
-
-  monitor.positions = monitor.positions?.map(p => {
-    // const interestAccrued = (pool.account.interestRate * p.account.amount / 100 * ((Date.now() / 1000 - p.account.timestamp) / 86400 + 1) / 365)
-        
-    return {
-      ...p,
-      ltv: p.amountInQT / (p.amountInBT * (monitor.activePairsSet.find(pair => pair.BTAddress == p.baseCoin.address && pair.QTAddress == p.quoteCoin.address)?.price || 0))
-    }
-  })
+      Object.keys(price).forEach(key => {
+        acc[key + '-' + price[key].vsToken] = price[key]
+      }
+      )
+      return acc
+    }, {})
+    
+  
+    monitor.activePairsSet?.forEach(pair => {
+      pair.price = allPrices[pair.BTAddress + '-' + pair.QTAddress].price
+    })
+  
+    monitor.positions = monitor.positions?.map(p => {
+      // const interestAccrued = (pool.account.interestRate * p.account.amount / 100 * ((Date.now() / 1000 - p.account.timestamp) / 86400 + 1) / 365)
+          
+      return {
+        ...p,
+        ltv: p.amountInQT / (p.amountInBT * (monitor.activePairsSet.find(pair => pair.BTAddress == p.baseCoin.address && pair.QTAddress == p.quoteCoin.address)?.price || 0))
+      }
+    })
+  } catch (e) {
+    console.log(e)
+  }
+  
 
   setTimeout(() => loadPrices(monitor), 30000)
 }
