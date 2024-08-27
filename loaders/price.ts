@@ -41,10 +41,14 @@ export async function loadPrices(monitor: Monitoring) {
       )
       return acc
     }, {})
-    
   
     monitor.activePairsSet?.forEach(pair => {
-      pair.price = allPrices[pair.BTAddress + '-' + pair.QTAddress].price
+      try {
+        pair.price = allPrices[pair.BTAddress + '-' + pair.QTAddress]!.price
+      } catch (e) {
+        console.log(pair.BTAddress, pair.QTAddress)
+        console.log(e)
+      }
     })
   
     monitor.positions = monitor.positions?.map(p => {
