@@ -1,7 +1,9 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
-axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay });
+axiosRetry(axios, { retryDelay: axiosRetry.exponentialDelay, onRetry: (rc, e) => {
+  console.log(rc, e)
+} });
 
 
 export interface Token {
@@ -15,7 +17,7 @@ export interface Token {
 }
 
 export async function loadTokenList(tokenList: Token[]): Promise<void> {
-  const response = await axios.get<Token[]>('https://tokens.jup.ag/tokens?tags=verified,pump');
+  const response = await axios.get<Token[]>('https://tokens.jup.ag/tokens?tags=verified,pump,strict');
   tokenList.push(...response.data);
 }
 

@@ -25,6 +25,8 @@ export const monitor: Monitoring = {
 const tokenList: Token[] = [
 ]
 
+listen()
+
 loadTokenList(tokenList).then(() => {
   console.log('tokenList loaded')
   monitorAccountBalance('bkhAyULeiXwju7Zmy4t3paDHtVZjNaofVQ4VgEdTWiE', 'oracleGasRemain', monitor)
@@ -43,8 +45,14 @@ loadTokenList(tokenList).then(() => {
     monitor.meta.openedPositions = monitor.positions.length
   }, monitor.meta, 'deployed')
 
+  useEffects('liquidated', async () => {
+    // when deployed changes, update utilization
+    await loadPositionsFromAnchor('CRSeeBqjDnm3UPefJ9gxrtngTsnQRhEJiTA345Q83X3v', provider, monitor, tokenList)
+    monitor.meta.utilization = monitor.positions.reduce((acc, { amountInQT }) => acc + amountInQT, 0)
+    monitor.meta.openedPositions = monitor.positions.length
+  }, monitor.meta, 'liquidationGasRemain')
+
   loadPrices(monitor)
 
 
 })
-listen()

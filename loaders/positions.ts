@@ -70,7 +70,8 @@ export async function loadPositionsFromAnchor(programIdAddress: string, provider
       amountInQT: new BigNumber(account.amount.toString()).div(1e9).toNumber(),
       amountInBT: new BigNumber(account.collateralAmount.toString()).div(10**token!.decimals).toNumber(),
       lastInterestCollectionElapsed: Date.now() / 1000 - account.lastInterestCollect.toNumber(),
-      elapsed: Date.now() / 1000 - account.timestamp.toNumber()
+      elapsed: Date.now() / 1000 - account.timestamp.toNumber(),
+      interestRate: account.interestRate
     }
   })
   )
