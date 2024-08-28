@@ -26,6 +26,7 @@ const tokenList: Token[] = [
 ]
 
 loadTokenList(tokenList).then(() => {
+  console.log('tokenList loaded')
   monitorAccountBalance('bkhAyULeiXwju7Zmy4t3paDHtVZjNaofVQ4VgEdTWiE', 'oracleGasRemain', monitor)
   monitorAccountBalance('BFeh7vYjH9TDLUzosbCKfQQgxDW4eQzVezw8FFbmM7mt', 'liquidationGasRemain', monitor)
   monitorAccountBalance('6riP1W6R3qzUPWYwLGtXEC23aTqmyAEdDtXzhntJquAh', 'deployed', monitor)
